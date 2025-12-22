@@ -44,9 +44,9 @@ const LevelBadge = styled.div`
   font-size: 1em;
 `;
 
-const CharacterName = styled.h3<{ textColor?: string }>`
+const CharacterName = styled.h3<{ nameColor?: string }>`
 
-  color: ${({ textColor }) => textColor || "#fff"};
+  color: ${({ nameColor }) => nameColor || "#fff"};
   font-size: 1.2em;
   font-weight: bold;
   margin: 3px 0px 6px 0px;`
@@ -65,7 +65,7 @@ export default function Character({char}: Props) {
     <CharacterCard bgcolor={char.charStyle?.backgroundColor ?? "#222"}>
         {char.level && <LevelBadge>{char.level}</LevelBadge>}
         <CharacterPhoto src="https://placehold.co/150x170" alt={char.name} />
-        <CharacterName textColor={char.charStyle?.textColor}>{char.name}</CharacterName>
+        <CharacterName nameColor={char.charStyle?.textColor}>{char.name}</CharacterName>
         <ProgressBar value={currentHPPercent} barColor="#ef4444" textColor="#ffffff" label={HPLabel} />
         <ProgressBar value={currentMPPercent} barColor="#3b82f6" textColor="#ffffff" label={MPLabel} />
         {char.exp  && <ProgressBar value={10} barColor="#facc15" textColor="#000000" />}
