@@ -1,7 +1,8 @@
 "use client"
-import { CharacterInfo } from "../../types";
+import { CharacterInfo } from "../../../types";
 import styled from "styled-components";
-import ProgressBar from "../rpg-components/progressbar";
+import ProgressBar from "../progressbar";
+import ExperienceBar from "../experiencebar";
 
 type Props = {
   char: CharacterInfo;
@@ -44,31 +45,30 @@ const LevelBadge = styled.div`
   font-size: 1em;
 `;
 
-const CharacterName = styled.h3<{ nameColor?: string }>`
-
-  color: ${({ nameColor }) => nameColor || "#fff"};
+const CharacterName = styled.h3<{namecolor?: string}>`
+  color: ${({ namecolor }) => namecolor || "#fff"};
   font-size: 1.2em;
   font-weight: bold;
-  margin: 3px 0px 6px 0px;`
-  ;
+  margin: 3px 0px 6px 0px;
+`;
 
-export default function Character({char}: Props) {
+export default function DMCharacter({char}: Props) {
 
-  const currentHPPercent = (char.currentHP / char.maxHP) * 100;
-  const HPLabel = `${char.currentHP}/${char.maxHP}`;
+  const currentHPPercent = (char.hp / char.max_hp) * 100;
+  const HPLabel = `${char.hp}/${char.max_hp}`;
 
-  const currentMPPercent = (char.currentMP / char.maxMP) * 100;
-  const MPLabel = `${char.currentMP}/${char.maxMP}`;
+  const currentMPPercent = (char.mana / char.max_mana) * 100;
+  const MPLabel = `${char.mana}/${char.max_mana}`;
   
 
   return (
-    <CharacterCard bgcolor={char.charStyle?.backgroundColor ?? "#222"}>
-        {char.level && <LevelBadge>{char.level}</LevelBadge>}
-        <CharacterPhoto src="https://placehold.co/150x170" alt={char.name} />
-        <CharacterName nameColor={char.charStyle?.textColor}>{char.name}</CharacterName>
+    <CharacterCard bgcolor={char.bg_color ?? "#222"}>
+        {char.level > 0 && <LevelBadge>{char.level}</LevelBadge>}
+        <CharacterPhoto src="https://placehold.co/150x170" alt={char.char_name} />
+        <CharacterName namecolor={char.text_color}>{char.char_name}</CharacterName>
         <ProgressBar value={currentHPPercent} barColor="#ef4444" textColor="#ffffff" label={HPLabel} />
         <ProgressBar value={currentMPPercent} barColor="#3b82f6" textColor="#ffffff" label={MPLabel} />
-        {char.exp  && <ProgressBar value={10} barColor="#facc15" textColor="#000000" />}
+        <ExperienceBar exp={char.exp} requiredExp={char.required_exp} />
     </CharacterCard>
   );
 }

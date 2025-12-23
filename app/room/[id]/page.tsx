@@ -1,4 +1,4 @@
-import RoomClient from "@/app/components/rpg-components/room-client";
+import RoomClient from "@/app/components/rpg-components/viewer-components/room-client";
 
 type RoomProps = {
   params: Promise<{ id: string }>;
@@ -9,7 +9,7 @@ export default async function Room({ params }: RoomProps) {
 
   return (
     <div>
-      <RoomClient/>
+      <RoomClient roomId={id}/>
     </div>
   )
 }
