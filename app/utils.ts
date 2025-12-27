@@ -6,4 +6,5 @@ export function generateRandomString(length: number = 10): string {
     result += chars[randomIndex];
   }
   return result;
+  
 }

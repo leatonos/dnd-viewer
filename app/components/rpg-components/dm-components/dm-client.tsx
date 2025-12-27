@@ -1,13 +1,12 @@
 "use client";
 
 import { CharacterInfo, RoomInfo } from "@/app/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import styled from "styled-components";
 import DMCharacter from "./dm-character";
 import { generateRandomString } from "@/app/utils";
-
-let socket: Socket | null = null;
+import { SocketContext } from "@/app/lib/socket-context";
 
 const DmPartyContainer = styled.div<{ $bgColor?: string }>`
   padding: 20px;
@@ -31,7 +30,9 @@ export default function DmClient() {
   const [characters, setCharacters] = useState<CharacterInfo[]>([]);
   const [connected, setConnected] = useState<boolean>(false);
   const [roomId, setRoomId] = useState<string | null>(null);
-  const [roomInfo, setRoomInfo] = useState<any | null>(null);
+  const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
+
+  const socketRef = useRef<Socket | null>(null);
 
 
   const dmKey = typeof window !== "undefined" ? localStorage.getItem("dm_key") : null;
@@ -54,7 +55,9 @@ export default function DmClient() {
   }  
 
   useEffect(() => {
-    socket = io("http://localhost:5000");
+    socketRef.current = io("http://localhost:5000");
+
+    const socket = socketRef.current;
 
     socket.on("connect", () => {
       console.log("Connected to server");
@@ -67,7 +70,6 @@ export default function DmClient() {
 
     socket.on("room_created", (data) => {
       console.log("Room created:", data);
-      setRoomId(data.room_id);
       setRoomInfo(data.room_info);
       setCharacters(data.room_info.characters);
       setConnected(true);
@@ -80,38 +82,61 @@ export default function DmClient() {
     })
 
     return () => {
-      socket?.disconnect();
-      socket = null; // Clean up
+      socket.disconnect();
+      socketRef.current = null; // Clean up
     };
   }, []);
 
 
   const createRoom = () => {
+    const socket = socketRef.current;
     if (!socket) {console.warn("Socket not connected yet");return;}
     console.log(socket.id)
     socket.emit("create_room", new_room_info());
   }
 
-  const addCharacter = (roomId:string) => {
+  const addCharacter = (roomId:string, dm_key:string) => {
+    const sentData = {
+      room_id: roomId,
+      dm_key: dm_key
+    }
+    const socket = socketRef.current;
     console.log("Adding new character...");
     if (!socket) {console.warn("Socket not connected yet");return;}
-    socket.emit("create_new_character", roomId);
+    socket.emit("create_new_character", sentData);
   }
 
+  const deleteCharacter = (charId:string) => {
+
+    const dataSent = { 
+      char_key: charId,
+      room_id: roomId,
+      dm_key: dmKey
+    };
+
+    const socket = socketRef.current;
+    if (!socket) {console.warn("Socket not connected yet");return;}
+    console.log("Deleting character...");
+    socket.emit("delete_character", dataSent);
+  }
+
+  const isRoomReady = roomInfo !== null && dmKey !== null;
+
   return (
+    <SocketContext.Provider value={socketRef.current}>
     <div>
-        <DmPartyContainer>
-        {characters.map((char) => (
-          <DMCharacter key={char.char_id} char={char} />
-        ))}
+       <p>Room ID: {roomInfo?.room_id}</p>
+        <p>Status: {connected ? "Connected" : "Disconnected"}</p>
+        <DmPartyContainer> 
+          <p>{JSON.stringify(characters)}</p>
+          {/*characters.map((char) => (
+            <DMCharacter key={char.char_id} char={char} />
+          ))*/}
         <div>
-          <p>Room ID: {roomId}</p>
-          <p>Status: {connected ? "Connected" : "Disconnected"}</p>
-          {roomId && (<button onClick={() => addCharacter(roomId)}>Add Character</button>)}
-        </div>
-        <div> 
+          {isRoomReady && (<button onClick={() => addCharacter(roomInfo.room_id, dmKey)}>Add Character</button>)}
         </div>
         </DmPartyContainer>
     </div>
+    </SocketContext.Provider>
   );
 }

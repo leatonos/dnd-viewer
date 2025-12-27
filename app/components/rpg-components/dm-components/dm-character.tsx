@@ -3,6 +3,7 @@ import { CharacterInfo } from "../../../types";
 import styled from "styled-components";
 import ProgressBar from "../progressbar";
 import ExperienceBar from "../experiencebar";
+import { useRef } from "react";
 
 type Props = {
   char: CharacterInfo;
@@ -53,6 +54,20 @@ const CharacterName = styled.h3<{namecolor?: string}>`
 `;
 
 export default function DMCharacter({char}: Props) {
+
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const updateExample = (newHP: number) => {
+    //setHP(newHP);
+
+    // Clear previous timer
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+    // Start new debounce timer
+    debounceTimer.current = setTimeout(() => {
+      //onUpdate(newHP); // Emit to server
+    }, 1000); // 1 second after last click
+  };
 
   const currentHPPercent = (char.hp / char.max_hp) * 100;
   const HPLabel = `${char.hp}/${char.max_hp}`;

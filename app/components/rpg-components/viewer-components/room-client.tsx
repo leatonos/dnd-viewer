@@ -27,18 +27,6 @@ const PartyContainer = styled.div<{ $bgColor?: string }>`
     flex-direction: column;
   }`;
 
-
-function generateRandomString(length: number = 10): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * chars.length);
-    result += chars[randomIndex];
-  }
-  return result;
-}
-
-
 export default function RoomClient({roomId}: RoomClientProps) {
   const [characters, setCharacters] = useState<CharacterInfo[]>([]);
   const [roomBgColor, setRoomBgColor] = useState("white");
@@ -59,36 +47,16 @@ export default function RoomClient({roomId}: RoomClientProps) {
       setRoomBgColor(data.room_bg || "white");
     });
 
-    socket.on("message", (msg) => {
-      //setMessages((prev) => [...prev, msg]);
-    });
-
     socket.on("new_character_created",(data)=>{
       console.log("new Character added");
       console.log(data);
       setCharacters((prev)=>[...prev,data]);
     })
 
-    socket.on("chat_message", (msg) => {
-      //setMessages((prev) => [...prev, msg]);
-    });
-
     return () => {
       socket.disconnect();
     };
   }, []);
-
-  const sendMessage = () => {
-    socket.emit("chat_message", "Hello from Next.js!");
-  };
-
-  const createRoom = () => {
-    socket.emit("create_room", {
-      room_id: "room123",
-      dm_key: "my-secret-dm-key"
-    });
-  }
-
 
   return (
     <PartyContainer $bgColor={roomBgColor}>
