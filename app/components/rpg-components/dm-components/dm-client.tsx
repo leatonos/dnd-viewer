@@ -81,6 +81,11 @@ export default function DmClient() {
       setCharacters((prev)=>[...prev,data]);
     })
 
+    socket.on("character_deleted",(remainingCharacters)=>{
+      setCharacters(remainingCharacters);
+    })
+
+
     return () => {
       socket.disconnect();
       socketRef.current = null; // Clean up
@@ -106,20 +111,6 @@ export default function DmClient() {
     socket.emit("create_new_character", sentData);
   }
 
-  const deleteCharacter = (charId:string) => {
-
-    const dataSent = { 
-      char_key: charId,
-      room_id: roomId,
-      dm_key: dmKey
-    };
-
-    const socket = socketRef.current;
-    if (!socket) {console.warn("Socket not connected yet");return;}
-    console.log("Deleting character...");
-    socket.emit("delete_character", dataSent);
-  }
-
   const isRoomReady = roomInfo !== null && dmKey !== null;
 
   return (
@@ -128,14 +119,13 @@ export default function DmClient() {
        <p>Room ID: {roomInfo?.room_id}</p>
         <p>Status: {connected ? "Connected" : "Disconnected"}</p>
         <DmPartyContainer> 
-          <p>{JSON.stringify(characters)}</p>
-          {/*characters.map((char) => (
-            <DMCharacter key={char.char_id} char={char} />
-          ))*/}
-        <div>
+          {isRoomReady && characters.map((char) => (
+            <DMCharacter key={char.char_id} char={char} roomId={roomInfo?.room_id} dmKey={dmKey} />
+          ))}
+        </DmPartyContainer>
+           <div>
           {isRoomReady && (<button onClick={() => addCharacter(roomInfo.room_id, dmKey)}>Add Character</button>)}
         </div>
-        </DmPartyContainer>
     </div>
     </SocketContext.Provider>
   );

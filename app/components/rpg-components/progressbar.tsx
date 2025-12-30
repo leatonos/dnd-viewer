@@ -7,15 +7,16 @@ type ProgressBarProps = {
   barColor?: string;
   textColor?: string;
   label?: string;
+  isDM: boolean;
 };
 
 /* ================= STYLES ================= */
 
-const ProgressWrapper = styled.div`
+const ProgressWrapper = styled.div<{$isDM: boolean}>`
   width: 100%;
   height: 28px;
   background: #e5e7eb;
-  border-radius: 999px;
+  border-radius: ${({ $isDM }) => ($isDM ? "0" : "999px")};
   overflow: hidden;
   position: relative;
 `;
@@ -44,11 +45,12 @@ const ProgressText = styled.span<{ $textColor?: string }>`
 
 /* ================= COMPONENT ================= */
 
-export default function ProgressBar({value,label,barColor,textColor}: ProgressBarProps) {
+export default function ProgressBar({value,label,barColor,textColor,isDM}: ProgressBarProps) {
   const safeValue = Math.min(Math.max(value, 0), 100);
 
   return (
     <ProgressWrapper
+      $isDM={isDM}
       role="progressbar"
       aria-valuenow={safeValue}
       aria-valuemin={0}

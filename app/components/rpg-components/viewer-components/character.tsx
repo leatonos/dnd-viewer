@@ -66,9 +66,9 @@ export default function Character({char}: Props) {
         {char.level > 0 && <LevelBadge>{char.level}</LevelBadge>}
         <CharacterPhoto src="https://placehold.co/150x170" alt={char.char_name} />
         <CharacterName namecolor={char.text_color}>{char.char_name}</CharacterName>
-        <ProgressBar value={currentHPPercent} barColor="#ef4444" textColor="#ffffff" label={HPLabel} />
-        <ProgressBar value={currentMPPercent} barColor="#3b82f6" textColor="#ffffff" label={MPLabel} />
-        <ExperienceBar exp={char.exp} requiredExp={char.required_exp} />
+        <ProgressBar value={currentHPPercent} barColor="#ef4444" textColor="#ffffff" label={HPLabel} isDM={false} />
+        <ProgressBar value={currentMPPercent} barColor="#3b82f6" textColor="#ffffff" label={MPLabel} isDM={false} />
+        <ExperienceBar exp={char.exp} requiredExp={char.required_exp} isDM={false} />
     </CharacterCard>
   );
 }

@@ -5,6 +5,7 @@ import { io, Socket } from "socket.io-client";
 import styled from "styled-components";
 import Character from "./character";
 import { CharacterInfo, RoomInfo } from "@/app/types";
+import dynamic from "next/dynamic";
 
 let socket: Socket;
 
@@ -27,7 +28,7 @@ const PartyContainer = styled.div<{ $bgColor?: string }>`
     flex-direction: column;
   }`;
 
-export default function RoomClient({roomId}: RoomClientProps) {
+function RoomClient({roomId}: RoomClientProps) {
   const [characters, setCharacters] = useState<CharacterInfo[]>([]);
   const [roomBgColor, setRoomBgColor] = useState("white");
   const [roomTextColor, setRoomTextColor] = useState("black");
@@ -53,6 +54,14 @@ export default function RoomClient({roomId}: RoomClientProps) {
       setCharacters((prev)=>[...prev,data]);
     })
 
+    socket.on("character_deleted",(remainingCharacters)=>{
+      setCharacters(remainingCharacters);
+    })
+    
+    socket.on("character_updated",(updatedChar:CharacterInfo)=>{
+      setCharacters((prevChars)=> prevChars.map((char)=> char.char_id === updatedChar.char_id ? updatedChar : char ));
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -67,3 +76,8 @@ export default function RoomClient({roomId}: RoomClientProps) {
 
   );
 }
+
+export default dynamic(() => Promise.resolve(RoomClient), {
+  ssr: false,
+});
+
