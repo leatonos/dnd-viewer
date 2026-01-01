@@ -7,6 +7,7 @@ import styled from "styled-components";
 import DMCharacter from "./dm-character";
 import { generateRandomString } from "@/app/utils";
 import { SocketContext } from "@/app/lib/socket-context";
+import { AnimatePresence } from "motion/react";
 
 const DmPartyContainer = styled.div<{ $bgColor?: string }>`
   padding: 20px;
@@ -119,14 +120,17 @@ export default function DmClient() {
        <p>Room ID: {roomInfo?.room_id}</p>
         <p>Status: {connected ? "Connected" : "Disconnected"}</p>
         <DmPartyContainer> 
+          <AnimatePresence> 
           {isRoomReady && characters.map((char) => (
             <DMCharacter key={char.char_id} char={char} roomId={roomInfo?.room_id} dmKey={dmKey} />
           ))}
+          </AnimatePresence>
         </DmPartyContainer>
            <div>
           {isRoomReady && (<button onClick={() => addCharacter(roomInfo.room_id, dmKey)}>Add Character</button>)}
         </div>
     </div>
+    
     </SocketContext.Provider>
   );
 }

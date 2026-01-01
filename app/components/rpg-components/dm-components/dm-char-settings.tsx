@@ -8,12 +8,14 @@ import { useContext, useRef, useState } from "react";
 import { CharacterCard } from "@/app/styled-components";
 import Character from "../viewer-components/character";
 import Image from "next/image";
+import { on } from "events";
 
 type Props = {
   char: CharacterInfo;
   roomId: string;
   dmKey: string;
   onClose: () => void;
+  onUpdateChar: (char: CharacterInfo) => void;
 };
 
 const FullScreenWrapper = styled.div`
@@ -34,6 +36,7 @@ const FullScreenWrapper = styled.div`
 const CharSettingsContainer = styled.div`
     position: relative;
     width: 60%;
+    min-width: 500px;
     background: #ffffff;
     display: flex;
     flex-direction: row;
@@ -61,11 +64,27 @@ const CharProfileContainer = styled.div`
     margin-right: 20px;
 `;
 
+const CharacterPhotoContainer = styled.div<{ $bgcolor?: string }>`
+  width: 100%;
+  height: auto;
+  padding: 5px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  background-color: ${({ $bgcolor }) => $bgcolor ?? "#ffffff"};
+`;
+
 const CharacterPhoto = styled.img`
     width: 100%;
     height: auto;
     padding: 5px;
     box-sizing: border-box;
+`;
+
+const CharacterName = styled.h3<{ $textcolor?: string }>`
+    text-align:center;
+    font-weight:bold;
+    font-size:1.2em;
+    color:${({ $textcolor }) => $textcolor ?? "#000000"};
 `;
 
 const CharacterSettingsDetails = styled.div`
@@ -94,6 +113,23 @@ const SettingsInput = styled.input`
     border: 1px solid #000;
     `;
 
+const ColorSelectorContainer = styled.div`
+    display: flex;
+    width:100%;
+    flex-direction:row;
+    align-items: center;
+    justify-content: space-between;
+`;
+
+
+const ColorInput = styled.input`
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+`;
+
 const SaveButtonContainer = styled.div`
     display: flex;
     justify-content: flex-end;
@@ -109,25 +145,23 @@ const SaveButton = styled.button`
     cursor: pointer;
 `;
 
-export default function CharSettings({char, roomId, dmKey, onClose}: Props) {
+export default function CharSettings({char, roomId, dmKey, onClose, onUpdateChar}: Props) {
 
   const [currentCharInfo, setCurrentCharInfo] = useState<CharacterInfo>(char);
 
-  const socket = useContext(SocketContext);
-
-
-  const updateCharacter = (character: CharacterInfo) => {
-    if(!socket) return;
-
-    socket.emit("character_update", {
-      char_key: char.char_id,
-      char_info: character,
-      room_id: roomId,
-      dm_key: dmKey
-    });
-
+  // make a copy of the character info and update it
+  const handleInputChange = (field: keyof CharacterInfo, value: string | number) => {
+    setCurrentCharInfo(prev => ({
+      ...prev,
+      [field]: value
+    }));
   }
-  
+
+  const saveChanges = () => {
+    onClose();
+    onUpdateChar(currentCharInfo);
+  }
+
 
   return (
     <FullScreenWrapper>
@@ -136,42 +170,42 @@ export default function CharSettings({char, roomId, dmKey, onClose}: Props) {
                 <Image src="/icons/close.svg" alt="Close" width={24} height={24} />
             </CloseWindowButton>
             <CharProfileContainer>
-                <CharacterPhoto src="https://placehold.co/150x170" alt={currentCharInfo.char_name} />
-                <ControlGroup>
-                <SettingsLabel>Background Color:</SettingsLabel>
-                <SettingsInput type="color" />
-            </ControlGroup>
-            <ControlGroup>
-                <SettingsLabel>Name Color:</SettingsLabel>
-                <SettingsInput type="color" />
-            </ControlGroup>
+                <CharacterPhotoContainer $bgcolor={currentCharInfo.bg_color}>
+                    <CharacterPhoto src="https://placehold.co/150x170" alt={currentCharInfo.char_name} />
+                    <CharacterName $textcolor={currentCharInfo.text_color}>{currentCharInfo.char_name}</CharacterName>
+                </CharacterPhotoContainer>
+                <ColorSelectorContainer>
+                    <SettingsLabel>Background Color</SettingsLabel>
+                    <ColorInput value={currentCharInfo.bg_color} onChange={(e)=>handleInputChange("bg_color",e.target.value)} type="color" />
+                </ColorSelectorContainer>
+                <ColorSelectorContainer>
+                    <SettingsLabel>Name Color</SettingsLabel>
+                    <ColorInput value={currentCharInfo.text_color} onChange={(e)=>handleInputChange("text_color",e.target.value)} type="color" />
+                </ColorSelectorContainer>
             </CharProfileContainer>
             <CharacterSettingsDetails>
                  <ControlGroup>
                     <SettingsLabel>Name:</SettingsLabel>
-                    <SettingsInput type="text" />
+                    <SettingsInput type="text" value={currentCharInfo.char_name} onChange={(e) => handleInputChange("char_name", e.target.value)} />
                 </ControlGroup>
                 <ControlGroup>
                     <SettingsLabel>Max HP:</SettingsLabel>
-                    <SettingsInput type="number" />
+                    <SettingsInput type="number" value={currentCharInfo.max_hp} onChange={(e) => handleInputChange("max_hp", Number(e.target.value))} />
                 </ControlGroup>
                 <ControlGroup>
                     <SettingsLabel>Max MP:</SettingsLabel>
-                    <SettingsInput type="number" />
+                    <SettingsInput type="number" value={currentCharInfo.max_mana} onChange={(e) => handleInputChange("max_mana", Number(e.target.value))} />
                 </ControlGroup>
                 <ControlGroup>
                     <SettingsLabel>Level:</SettingsLabel>
-                    <SettingsInput type="number" />
+                    <SettingsInput type="number" value={currentCharInfo.level} onChange={(e) => handleInputChange("level", Number(e.target.value))} />
                 </ControlGroup>
             <ControlGroup>
                 <SettingsLabel>Required Experience:</SettingsLabel>
-                <SettingsInput type="number" />
+                <SettingsInput type="number" value={currentCharInfo.required_exp} onChange={(e) => handleInputChange("required_exp", Number(e.target.value))} />
             </ControlGroup>
                 <SaveButtonContainer>
-                    <SaveButton onClick={() => {
-                      updateCharacter(currentCharInfo);
-                      onClose();
-                    }}>Save Changes</SaveButton>
+                    <SaveButton onClick={saveChanges}>Save Changes</SaveButton>
                 </SaveButtonContainer>
             </CharacterSettingsDetails>
         </CharSettingsContainer>

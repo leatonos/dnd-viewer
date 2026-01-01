@@ -6,6 +6,7 @@ import styled from "styled-components";
 import Character from "./character";
 import { CharacterInfo, RoomInfo } from "@/app/types";
 import dynamic from "next/dynamic";
+import {AnimatePresence} from "motion/react"; 
 
 let socket: Socket;
 
@@ -69,9 +70,11 @@ function RoomClient({roomId}: RoomClientProps) {
 
   return (
     <PartyContainer $bgColor={roomBgColor}>
-      {characters.map((char) => (
-        <Character key={char.char_id} char={char} />
-      ))}
+      <AnimatePresence>
+        {characters.map((char) => (
+          <Character key={char.char_id} char={char} />
+        ))}
+      </AnimatePresence>
     </PartyContainer>
 
   );
