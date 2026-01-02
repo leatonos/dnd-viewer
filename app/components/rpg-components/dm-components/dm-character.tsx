@@ -66,21 +66,6 @@ const SettingsButton = styled.button`
   cursor: pointer;
 `;
 
-const ImageSelectorButton = styled.button`
-  position: absolute;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  top: 45px;
-  left: 0px;
-  background: white;
-  color: #000;
-  border-radius: 999px;
-  width: 36px;
-  height: 36px;
-  cursor: pointer;
-`;
-
 const CharacterName = styled.h3<{namecolor?: string}>`
   color: ${({ namecolor }) => namecolor || "#fff"};
   font-size: .9em;
@@ -225,14 +210,10 @@ export default function DMCharacter({char, roomId, dmKey}: Props) {
         {currentCharInfo.level > 0 && <LevelBadge>{currentCharInfo.level}</LevelBadge>}
         {/* Settings Button */}
         <SettingsButton onClick={() => setIsSettingsOpen(true)} title="Settings">
-          <Image src="/icons/settings.svg" alt="Settings" width={18} height={18} />  
+          <Image src="icons/ui/settings.svg" alt="Settings" width={25} height={25} />  
         </SettingsButton>
-        {/* Image Selector Button */}
-         <ImageSelectorButton onClick={() => setIsSettingsOpen(true)} title="Settings">
-          <Image src="/icons/camera.svg" alt="Settings" width={18} height={18} />  
-        </ImageSelectorButton>
          {/* Character Image */}
-        <CharacterPhoto src="https://placehold.co/150x170" alt={currentCharInfo.char_name} />
+        <CharacterPhoto src={currentCharInfo.photo} alt={currentCharInfo.char_name} />
          {/* Name Editor */}
         <NameInput type="text" value={currentCharInfo.char_name} onChange={(e) => { updateStat("char_name", e.target.value) }}/>
         {/* HP Bar */}
@@ -273,8 +254,7 @@ export default function DMCharacter({char, roomId, dmKey}: Props) {
           <NumberButton onClick={() => updateStat("exp", Math.max(currentCharInfo.exp + expInput, 0))}>+</NumberButton>
         </FlexRow>
         </>}
-        <button onClick={() => deleteCharacter(currentCharInfo.char_id, roomId, dmKey)}>Delete Character</button>
-        {IsSettingsOpen && <CharSettings char={currentCharInfo} roomId={roomId} dmKey={dmKey} onClose={() => setIsSettingsOpen(false)} onUpdateChar={updateCharacter} />}
+        {IsSettingsOpen && <CharSettings char={currentCharInfo} roomId={roomId} dmKey={dmKey} onClose={() => setIsSettingsOpen(false)} onDelete={deleteCharacter} onUpdateChar={updateCharacter} />}
     </CharacterCard>
   )
 }

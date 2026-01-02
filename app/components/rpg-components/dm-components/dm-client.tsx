@@ -25,6 +25,14 @@ const DmPartyContainer = styled.div<{ $bgColor?: string }>`
     flex-direction: column;
   }`;
 
+const CreateCharBtn = styled.button`
+  width:20%;
+`;
+
+const CreateIcon = styled.img`
+  width:100%;
+`;
+
 
 export default function DmClient() {
   const [messages, setMessages] = useState<string[]>([]);
@@ -121,13 +129,21 @@ export default function DmClient() {
         <p>Status: {connected ? "Connected" : "Disconnected"}</p>
         <DmPartyContainer> 
           <AnimatePresence> 
-          {isRoomReady && characters.map((char) => (
-            <DMCharacter key={char.char_id} char={char} roomId={roomInfo?.room_id} dmKey={dmKey} />
-          ))}
+            {isRoomReady && characters.map((char) => (
+              <DMCharacter key={char.char_id} char={char} roomId={roomInfo?.room_id} dmKey={dmKey} />
+            ))}
+            {isRoomReady && 
+              <CreateCharBtn>
+                <button onClick={() => addCharacter(roomInfo.room_id, dmKey)}>
+                  <CreateIcon src="/icons/ui/create.svg"/>
+                  Add Character
+                </button> 
+              </CreateCharBtn>
+            }
           </AnimatePresence>
         </DmPartyContainer>
-           <div>
-          {isRoomReady && (<button onClick={() => addCharacter(roomInfo.room_id, dmKey)}>Add Character</button>)}
+        <div>
+         
         </div>
     </div>
     

@@ -3,12 +3,13 @@ import { CharacterInfo } from "../../../types";
 import styled from "styled-components";
 import Image from "next/image";
 import { on } from "events";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {characterImgCollections} from "../../../utils"
 
 type Props = {
   currentImage:string;
   onClose: () => void;
-  onChooseImage: () => void;
+  onChooseImage: (image:string) => void;
 };
 
 const FullScreenWrapper = styled.div`
@@ -28,12 +29,13 @@ const FullScreenWrapper = styled.div`
 
 const CharPhotoSelectorContainer = styled.div`
     position: relative;
-    width: 60%;
+    width: 90%;
     min-width: 500px;
     background: #ffffff;
     display: flex;
     flex-direction: row;
     padding: 20px;
+    padding-top:45px;
     border-radius: 8px;
 `;
 
@@ -76,15 +78,88 @@ const ImageOptionsContainer = styled.div`
     display: flex;
     width: 65%;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
 `;
 
+const ImageCategoryTabContainer = styled.nav`
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;              
+`;
+
+const ImageTab = styled.div`
+    text-align: center;
+    background-color: #6366f1;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px 20px 0px 0px;       
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;  /* Smooth hover animation */
+
+    &:hover {
+        background-color: #4f46e5;
+    }
+
+`;
+
+const ImageCollection = styled.div`
+    width:100%;
+    padding:4px;
+    gap:2px;
+    display:flex;
+    height:300px;
+    overflow-y:auto;
+    flex-wrap: wrap;
+`;
+
+const ImageOption = styled.img`
+    width:100px;
+    height:100px;
+    cursor:pointer;
+`;
+
+const SaveButtonContainer = styled.div`
+    display: flex;
+    margin-top: 50px;
+    justify-content: flex-end;
+    width: 100%;
+`;
+
+const SaveButton = styled.button`
+    padding: 8px 16px;
+    background: #10b981;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+`;
+
+
 export default function ImageSelector({currentImage, onClose, onChooseImage}: Props) {
 
-  const [selectedImage, setSelectedImage] = useState<string>()
+  const [selectedImage, setSelectedImage] = useState<string>(currentImage)
+  const [selectedTab, setSelectedTab] = useState<number>(0)
 
+
+  const imageGallery = characterImgCollections[selectedTab].characters.map((image)=>{
+    return image
+  })
+
+  const galleryFolder = characterImgCollections[selectedTab].folder
+
+  const imageTabs = characterImgCollections.map((collection)=>{
+    return collection.colletionName
+  })
+
+
+  
   const chooseImage = () => {
+    if(!selectedImage) {return}
+    onChooseImage(selectedImage)
     onClose();
   }
 
@@ -96,11 +171,26 @@ export default function ImageSelector({currentImage, onClose, onChooseImage}: Pr
             </CloseWindowButton>
             <CharImagePreviewContainer>
                 <CharacterPhotoContainer>
-                    <CharacterPhoto src="https://placehold.co/150x170" alt='your current selected image' />
+                    <CharacterPhoto src={selectedImage} alt='your current selected image' />
                 </CharacterPhotoContainer>
             </CharImagePreviewContainer>
             <ImageOptionsContainer>
-                 
+                <ImageCategoryTabContainer>
+                    {imageTabs.map((tab, index) => (
+                        <ImageTab onClick={()=> setSelectedTab(index)} key={index}>{tab}</ImageTab>
+                    ))}
+                </ImageCategoryTabContainer>
+                <ImageCollection>
+                    {imageGallery.map((image) =>{
+                        const imagePath = `${galleryFolder}/${image}`
+                        return(
+                            <ImageOption key={`${galleryFolder}_${image}`} onClick={()=>setSelectedImage(imagePath)} src={imagePath}/>
+                        )
+                    })}
+                </ImageCollection>
+                <SaveButtonContainer>
+                    <SaveButton onClick={chooseImage}>Save Changes</SaveButton>
+                </SaveButtonContainer>
             </ImageOptionsContainer>
         </CharPhotoSelectorContainer>
     </FullScreenWrapper>

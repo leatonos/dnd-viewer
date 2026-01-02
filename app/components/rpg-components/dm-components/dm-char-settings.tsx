@@ -5,10 +5,11 @@ import ProgressBar from "../progressbar";
 import ExperienceBar from "../experiencebar";
 import { SocketContext } from "@/app/lib/socket-context";
 import { useContext, useRef, useState } from "react";
-import { CharacterCard } from "@/app/styled-components";
+import { CharacterCard, StyledButton } from "@/app/styled-components";
 import Character from "../viewer-components/character";
 import Image from "next/image";
 import { on } from "events";
+import ImageSelector from "./dm-photo-selector";
 
 type Props = {
   char: CharacterInfo;
@@ -16,6 +17,7 @@ type Props = {
   dmKey: string;
   onClose: () => void;
   onUpdateChar: (char: CharacterInfo) => void;
+  onDelete: (char_id:string, room_id:string, dm_key:string) => void;
 };
 
 const FullScreenWrapper = styled.div`
@@ -65,6 +67,7 @@ const CharProfileContainer = styled.div`
 `;
 
 const CharacterPhotoContainer = styled.div<{ $bgcolor?: string }>`
+  position:relative;
   width: 100%;
   height: auto;
   padding: 5px;
@@ -78,6 +81,21 @@ const CharacterPhoto = styled.img`
     height: auto;
     padding: 5px;
     box-sizing: border-box;
+`;
+
+const ImageSelectorButton = styled.button`
+  position: absolute;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  top: 0px;
+  left: 0px;
+  background: white;
+  color: #000;
+  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
 `;
 
 const CharacterName = styled.h3<{ $textcolor?: string }>`
@@ -121,7 +139,6 @@ const ColorSelectorContainer = styled.div`
     justify-content: space-between;
 `;
 
-
 const ColorInput = styled.input`
     width: 30px;
     height: 30px;
@@ -130,10 +147,11 @@ const ColorInput = styled.input`
     cursor: pointer;
 `;
 
-const SaveButtonContainer = styled.div`
+const ButtonsContainer = styled.div`
     display: flex;
     justify-content: flex-end;
     width: 100%;
+    gap:20px;
 `;
 
 const SaveButton = styled.button`
@@ -145,9 +163,10 @@ const SaveButton = styled.button`
     cursor: pointer;
 `;
 
-export default function CharSettings({char, roomId, dmKey, onClose, onUpdateChar}: Props) {
+export default function CharSettings({char, roomId, dmKey, onClose, onUpdateChar, onDelete}: Props) {
 
   const [currentCharInfo, setCurrentCharInfo] = useState<CharacterInfo>(char);
+  const [isPhotoSelectionOpen, setIsPhotoSelection] = useState<boolean>(false)
 
   // make a copy of the character info and update it
   const handleInputChange = (field: keyof CharacterInfo, value: string | number) => {
@@ -162,6 +181,21 @@ export default function CharSettings({char, roomId, dmKey, onClose, onUpdateChar
     onUpdateChar(currentCharInfo);
   }
 
+  const deleteCharacter = () =>{
+    onDelete(char.char_id,roomId,dmKey)
+    onClose();
+  }
+
+  const updatePhoto = (photoLink:string) =>{
+    console.log('at least I am alive')
+    console.log(photoLink)
+    handleInputChange("photo", photoLink)
+  }
+
+  const closeSelector = () =>{
+    setIsPhotoSelection(false)
+  }
+
 
   return (
     <FullScreenWrapper>
@@ -170,8 +204,11 @@ export default function CharSettings({char, roomId, dmKey, onClose, onUpdateChar
                 <Image src="/icons/close.svg" alt="Close" width={24} height={24} />
             </CloseWindowButton>
             <CharProfileContainer>
-                <CharacterPhotoContainer $bgcolor={currentCharInfo.bg_color}>
-                    <CharacterPhoto src="https://placehold.co/150x170" alt={currentCharInfo.char_name} />
+                <CharacterPhotoContainer $bgcolor={currentCharInfo.bg_color}> {/* Image Selector Button */}
+                    <ImageSelectorButton onClick={() => setIsPhotoSelection(true)} title="Settings">
+                        <Image src="/icons/ui/camera.svg" alt="Settings" width={25} height={25} />  
+                    </ImageSelectorButton>
+                    <CharacterPhoto src={currentCharInfo.photo} alt={currentCharInfo.char_name} />
                     <CharacterName $textcolor={currentCharInfo.text_color}>{currentCharInfo.char_name}</CharacterName>
                 </CharacterPhotoContainer>
                 <ColorSelectorContainer>
@@ -204,11 +241,19 @@ export default function CharSettings({char, roomId, dmKey, onClose, onUpdateChar
                 <SettingsLabel>Required Experience:</SettingsLabel>
                 <SettingsInput type="number" value={currentCharInfo.required_exp} onChange={(e) => handleInputChange("required_exp", Number(e.target.value))} />
             </ControlGroup>
-                <SaveButtonContainer>
-                    <SaveButton onClick={saveChanges}>Save Changes</SaveButton>
-                </SaveButtonContainer>
+                <ButtonsContainer>
+                    <StyledButton onClick={deleteCharacter}>
+                    <img src="icons/ui/trash.svg" width={25} />
+                        Delete
+                    </StyledButton>
+                    <StyledButton onClick={saveChanges}>
+                        <img src="icons/ui/save.svg" width={25} />
+                        Save Changes
+                    </StyledButton>
+                </ButtonsContainer>
             </CharacterSettingsDetails>
         </CharSettingsContainer>
+        {isPhotoSelectionOpen && <ImageSelector currentImage={currentCharInfo.photo} onClose={() => setIsPhotoSelection(false)} onChooseImage={updatePhoto} />}
     </FullScreenWrapper>
   )
 }

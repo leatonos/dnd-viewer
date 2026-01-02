@@ -24,5 +24,64 @@ export const CharacterCard = styled.div`
 `;
 
 export const H1Title = styled.h1`
-  font-size: 2rem;`
+  font-size: 2rem;`;
+
+
+type ButtonSize = "sm" | "md" | "lg";
+type FlexDirection = "row" | "column";
+
+interface ButtonProps {
+  $bgColor?: string;
+  $size?: ButtonSize;
+  $textColor?: string;
+  $flexDirection?: FlexDirection;
+}
+
+const sizeStyles = {
+  sm: `
+    padding: 6px 12px;
+    font-size: 12px;
+  `,
+  md: `
+    padding: 10px 16px;
+    font-size: 14px;
+  `,
+  lg: `
+    padding: 14px 20px;
+    font-size: 16px;
+  `,
+};
+
+export const StyledButton = styled.button<ButtonProps>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  background-color: ${({ $bgColor }) => $bgColor || "#ffffff"};
+   color: ${({ $textColor }) => $textColor || "#000000"};
+
+  flex-direction: ${({ $flexDirection }) => $flexDirection || "row"};
+
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  ${({ $size }) => sizeStyles[$size || "md"]};
+
+  transition: background-color 0.2s ease, transform 0.1s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
   
