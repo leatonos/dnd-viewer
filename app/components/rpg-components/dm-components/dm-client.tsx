@@ -25,7 +25,7 @@ const DmPartyContainer = styled.div<{ $bgColor?: string }>`
     flex-direction: column;
   }`;
 
-const CreateCharBtn = styled.button`
+const CreateCharBtn = styled.div`
   width:20%;
 `;
 
@@ -90,10 +90,9 @@ export default function DmClient() {
       setCharacters((prev)=>[...prev,data]);
     })
 
-    socket.on("character_deleted",(remainingCharacters)=>{
-      setCharacters(remainingCharacters);
-    })
-
+    socket.on("character_deleted", (deletedCharacter: string) => {
+      setCharacters(prev => prev.filter(character => character.char_id !== deletedCharacter));
+    });
 
     return () => {
       socket.disconnect();

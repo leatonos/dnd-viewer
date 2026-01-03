@@ -166,9 +166,16 @@ export default function ImageSelector({currentImage, onClose, onChooseImage}: Pr
   return (
     <FullScreenWrapper>
         <CharPhotoSelectorContainer>
+
+    <>
+    
             <CloseWindowButton onClick={onClose}>
                 <Image src="/icons/close.svg" alt="Close" width={24} height={24} />
             </CloseWindowButton>
+    
+    </>
+
+           
             <CharImagePreviewContainer>
                 <CharacterPhotoContainer>
                     <CharacterPhoto src={selectedImage} alt='your current selected image' />

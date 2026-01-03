@@ -17,10 +17,11 @@ type RoomClientProps = {
 const PartyContainer = styled.div<{ $bgColor?: string }>`
   padding: 20px;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
   width: 100%;
   height: 100vh;
+  align-items: center;
+  justify-content: center;
+  gap:20px;
   background: ${(props) => props.$bgColor || "#222"};
   box-sizing: border-box;
   flex-direction: row;

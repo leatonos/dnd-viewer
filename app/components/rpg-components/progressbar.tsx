@@ -16,7 +16,7 @@ const ProgressWrapper = styled.div<{$isDM: boolean}>`
   width: 100%;
   height: 28px;
   background: #e5e7eb;
-  border-radius: ${({ $isDM }) => ($isDM ? "0" : "999px")};
+  border-radius: ${({ $isDM }) => ($isDM ? "0" : "5px")};
   overflow: hidden;
   position: relative;
 `;

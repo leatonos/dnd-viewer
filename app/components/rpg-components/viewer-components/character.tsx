@@ -9,15 +9,14 @@ type Props = {
 };
 
  const CharacterCard = styled.div<{ bgcolor?: string }>`
-  display: flex;
   position: relative;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  width: 150px;
+  width: 250px;
   height: auto;
-  max-height: 280px;
   padding: 10px;
-  box-sizing: border-box
+  box-sizing: border-box;
   margin: 10px;
   background: ${({ bgcolor }) => bgcolor ?? "#222"};
 `;

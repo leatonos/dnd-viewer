@@ -25,15 +25,14 @@ type Props = {
   padding: 10px;
   box-sizing: border-box
   margin: 10px;
-  background: ${({ bgcolor }) => bgcolor ?? "#222"};
 `;
 
-const CharacterPhoto = styled.img`
+const CharacterPhoto = styled.img<{bgcolor:string}>`
+  background: ${({ bgcolor }) => bgcolor ?? "#222"};
   width: 100%;
   padding: 5px;
   box-sizing: border-box;
   `;
-
 const LevelBadge = styled.div`
   display: flex;
   align-items: center;
@@ -199,7 +198,7 @@ export default function DMCharacter({char, roomId, dmKey}: Props) {
   const MPLabel = `${currentCharInfo.mana}/${currentCharInfo.max_mana}`;
 
   return (
-    <CharacterCard bgcolor={currentCharInfo.bg_color ?? "#222"}
+    <CharacterCard
       as={motion.div}
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -213,7 +212,7 @@ export default function DMCharacter({char, roomId, dmKey}: Props) {
           <Image src="icons/ui/settings.svg" alt="Settings" width={25} height={25} />  
         </SettingsButton>
          {/* Character Image */}
-        <CharacterPhoto src={currentCharInfo.photo} alt={currentCharInfo.char_name} />
+        <CharacterPhoto bgcolor={currentCharInfo.bg_color ?? "#222"} src={currentCharInfo.photo} alt={currentCharInfo.char_name} />
          {/* Name Editor */}
         <NameInput type="text" value={currentCharInfo.char_name} onChange={(e) => { updateStat("char_name", e.target.value) }}/>
         {/* HP Bar */}
