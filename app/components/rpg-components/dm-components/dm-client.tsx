@@ -9,58 +9,6 @@ import { generateRandomString } from "@/app/utils";
 import { SocketContext } from "@/app/lib/socket-context";
 import { AnimatePresence } from "motion/react";
 
-const Dm_Dashboard = styled.main<{ $bgColor?: string }>`
-  display:flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-  background: ${(props) => props.$bgColor || "white"};
-  box-sizing: border-box;
-`;
-
-const DmPartyContainer = styled.div<{ $bgColor?: string }>`
-  padding: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  height: calc(100% - 80px);
-  background: ${(props) => props.$bgColor || "white"};
-  box-sizing: border-box;
-
-  flex-direction: row;
-
-  @media (orientation: portrait) {
-    flex-direction: column;
-  }`;
-
-const Header = styled.header<{ $bgColor?: string }>`
-  display:flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 80px;
-  box-sizing: border-box;
-  padding:5px;
-  background-color:#ffffff;
-`;
-
-const CreateCharBtn = styled.button`
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  width: 250px;
-`;
-
-const CreateIcon = styled.img`
-  width:100%;
-  max-width:70px;
-`;
-
-
 export default function DmClient() {
   const [messages, setMessages] = useState<string[]>([]);
   const [characters, setCharacters] = useState<CharacterInfo[]>([]);
@@ -73,6 +21,8 @@ export default function DmClient() {
 
   const dmKey = typeof window !== "undefined" ? localStorage.getItem("dm_key") : null;
   const localRoom = typeof window !== "undefined" ? localStorage.getItem("room_id") : null;
+  
+  const serverLink = process.env.NEXT_PUBLIC_SERVER!
   
   const UPDATE_DEBOUNCE_MS = 500;
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
@@ -94,7 +44,7 @@ export default function DmClient() {
   }  
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000");
+    socketRef.current = io(serverLink);
 
     const socket = socketRef.current;
 
@@ -216,3 +166,58 @@ export default function DmClient() {
     </SocketContext.Provider>
   );
 }
+
+
+
+
+const Dm_Dashboard = styled.main<{ $bgColor?: string }>`
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background: ${(props) => props.$bgColor || "white"};
+  box-sizing: border-box;
+`;
+
+const DmPartyContainer = styled.div<{ $bgColor?: string }>`
+  padding: 20px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: calc(100% - 80px);
+  background: ${(props) => props.$bgColor || "white"};
+  box-sizing: border-box;
+
+  flex-direction: row;
+
+  @media (orientation: portrait) {
+    flex-direction: column;
+  }`;
+
+const Header = styled.header<{ $bgColor?: string }>`
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  box-sizing: border-box;
+  padding:5px;
+  background-color:#ffffff;
+`;
+
+const CreateCharBtn = styled.button`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  width: 250px;
+`;
+
+const CreateIcon = styled.img`
+  width:100%;
+  max-width:70px;
+`;
+

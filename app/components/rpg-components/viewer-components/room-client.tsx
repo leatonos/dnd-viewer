@@ -36,8 +36,10 @@ function RoomClient({roomId}: RoomClientProps) {
   const [roomTextColor, setRoomTextColor] = useState("black");
   const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
 
+  const serverLink = process.env.NEXT_PUBLIC_SERVER!
+
   useEffect(() => {
-    socket = io("http://localhost:5000");
+    socket = io(serverLink);
 
     socket.on("connect", () => {
       console.log("Connected to server");
