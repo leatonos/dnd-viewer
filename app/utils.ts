@@ -8,7 +8,6 @@ export function generateRandomString(length: number = 10): string {
   return result;
 }
 
-const apiUrl = process.env.NEXT_PUBLIC_IMG_SOURCE;
 
 
 

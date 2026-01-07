@@ -9,13 +9,24 @@ import { generateRandomString } from "@/app/utils";
 import { SocketContext } from "@/app/lib/socket-context";
 import { AnimatePresence } from "motion/react";
 
+const Dm_Dashboard = styled.main<{ $bgColor?: string }>`
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background: ${(props) => props.$bgColor || "white"};
+  box-sizing: border-box;
+`;
+
 const DmPartyContainer = styled.div<{ $bgColor?: string }>`
   padding: 20px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  height: 100vh;
+  height: calc(100% - 80px);
   background: ${(props) => props.$bgColor || "white"};
   box-sizing: border-box;
 
@@ -25,12 +36,28 @@ const DmPartyContainer = styled.div<{ $bgColor?: string }>`
     flex-direction: column;
   }`;
 
-const CreateCharBtn = styled.div`
-  width:20%;
+const Header = styled.header<{ $bgColor?: string }>`
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  box-sizing: border-box;
+  padding:5px;
+  background-color:#ffffff;
+`;
+
+const CreateCharBtn = styled.button`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  width: 250px;
 `;
 
 const CreateIcon = styled.img`
   width:100%;
+  max-width:70px;
 `;
 
 
@@ -40,12 +67,15 @@ export default function DmClient() {
   const [connected, setConnected] = useState<boolean>(false);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
+  const [roomColor,setRoomColor] = useState<string>("")
 
   const socketRef = useRef<Socket | null>(null);
 
-
   const dmKey = typeof window !== "undefined" ? localStorage.getItem("dm_key") : null;
   const localRoom = typeof window !== "undefined" ? localStorage.getItem("room_id") : null;
+  
+  const UPDATE_DEBOUNCE_MS = 500;
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const new_room_info = () =>{
 
@@ -78,9 +108,10 @@ export default function DmClient() {
     });
 
     socket.on("room_created", (data) => {
-      console.log("Room created:", data);
-      setRoomInfo(data.room_info);
-      setCharacters(data.room_info.characters);
+      const roomContent:RoomInfo = data.room_info
+      setRoomInfo(roomContent);
+      setCharacters(roomContent.characters);
+      setRoomColor(roomContent.room_bg)
       setConnected(true);
     });
 
@@ -94,12 +125,15 @@ export default function DmClient() {
       setCharacters(prev => prev.filter(character => character.char_id !== deletedCharacter));
     });
 
+    socket.on('room_updated',(data:RoomInfo)=>{
+        setRoomColor(data.room_bg)
+    })
+
     return () => {
       socket.disconnect();
       socketRef.current = null; // Clean up
     };
   }, []);
-
 
   const createRoom = () => {
     const socket = socketRef.current;
@@ -107,6 +141,44 @@ export default function DmClient() {
     console.log(socket.id)
     socket.emit("create_room", new_room_info());
   }
+
+ const changeBackgroundColor = (newColor: string) => {
+  const socket = socketRef.current;
+  if (!socket) {
+    console.warn("Socket not connected yet");
+    return;
+  }
+
+  setRoomInfo(prev => {
+    if (!prev) return prev;
+
+    const updatedRoom: RoomInfo = {
+      ...prev,
+      room_bg: newColor,
+    };
+
+    // Clear previous timer
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+   const sentData = {
+      room_id: updatedRoom.room_id,
+      dm_key: dmKey,
+      room_info:updatedRoom
+    }
+
+    // Start new debounce timer
+    debounceTimer.current = setTimeout(() => {
+      socket.emit("room_update", sentData);
+    }, UPDATE_DEBOUNCE_MS);
+
+    return updatedRoom;
+  });
+
+  setRoomColor(newColor);
+};
+
 
   const addCharacter = (roomId:string, dm_key:string) => {
     const sentData = {
@@ -123,29 +195,24 @@ export default function DmClient() {
 
   return (
     <SocketContext.Provider value={socketRef.current}>
-    <div>
-       <p>Room ID: {roomInfo?.room_id}</p>
-        <p>Status: {connected ? "Connected" : "Disconnected"}</p>
-        <DmPartyContainer> 
+    <Dm_Dashboard>
+        <Header>
+          <input value={roomColor} onChange={(e)=>changeBackgroundColor(e.target.value)} type="color"/>
+        </Header>
+        <DmPartyContainer $bgColor={roomColor}>
           <AnimatePresence> 
             {isRoomReady && characters.map((char) => (
               <DMCharacter key={char.char_id} char={char} roomId={roomInfo?.room_id} dmKey={dmKey} />
             ))}
             {isRoomReady && 
-              <CreateCharBtn>
-                <button onClick={() => addCharacter(roomInfo.room_id, dmKey)}>
+              <CreateCharBtn onClick={() => addCharacter(roomInfo.room_id, dmKey)}>
                   <CreateIcon src="/icons/ui/create.svg"/>
                   Add Character
-                </button> 
               </CreateCharBtn>
             }
           </AnimatePresence>
         </DmPartyContainer>
-        <div>
-         
-        </div>
-    </div>
-    
+    </Dm_Dashboard>
     </SocketContext.Provider>
   );
 }

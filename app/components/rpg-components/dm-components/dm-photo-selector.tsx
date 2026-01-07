@@ -82,14 +82,14 @@ const ImageOptionsContainer = styled.div`
     align-items: flex-start;
 `;
 
-const ImageCategoryTabContainer = styled.nav`
+const TabContainer = styled.nav`
     width: 100%;
     display: flex;
     justify-content: flex-end;
     gap: 6px;              
 `;
 
-const ImageTab = styled.div`
+const Tab = styled.div`
     text-align: center;
     background-color: #6366f1;
     color: white;
@@ -166,27 +166,20 @@ export default function ImageSelector({currentImage, onClose, onChooseImage}: Pr
   return (
     <FullScreenWrapper>
         <CharPhotoSelectorContainer>
-
-    <>
-    
             <CloseWindowButton onClick={onClose}>
                 <Image src="/icons/close.svg" alt="Close" width={24} height={24} />
             </CloseWindowButton>
-    
-    </>
-
-           
             <CharImagePreviewContainer>
                 <CharacterPhotoContainer>
                     <CharacterPhoto src={selectedImage} alt='your current selected image' />
                 </CharacterPhotoContainer>
             </CharImagePreviewContainer>
             <ImageOptionsContainer>
-                <ImageCategoryTabContainer>
+                <TabContainer>
                     {imageTabs.map((tab, index) => (
-                        <ImageTab onClick={()=> setSelectedTab(index)} key={index}>{tab}</ImageTab>
+                        <Tab onClick={()=> setSelectedTab(index)} key={index}>{tab}</Tab>
                     ))}
-                </ImageCategoryTabContainer>
+                </TabContainer>
                 <ImageCollection>
                     {imageGallery.map((image) =>{
                         const imagePath = `${galleryFolder}/${image}`

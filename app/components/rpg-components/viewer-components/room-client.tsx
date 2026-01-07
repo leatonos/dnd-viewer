@@ -56,9 +56,14 @@ function RoomClient({roomId}: RoomClientProps) {
       setCharacters((prev)=>[...prev,data]);
     })
 
-    socket.on("character_deleted",(remainingCharacters)=>{
-      setCharacters(remainingCharacters);
+    socket.on('room_updated',(data)=>{
+      console.log(data)
+      setRoomBgColor(data.room_bg)
     })
+
+    socket.on("character_deleted", (deletedCharacter: string) => {
+      setCharacters(prev => prev.filter(character => character.char_id !== deletedCharacter));
+    });
     
     socket.on("character_updated",(updatedChar:CharacterInfo)=>{
       setCharacters((prevChars)=> prevChars.map((char)=> char.char_id === updatedChar.char_id ? updatedChar : char ));
