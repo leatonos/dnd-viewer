@@ -44,7 +44,7 @@ export default function DmClient() {
   }  
 
   useEffect(() => {
-    socketRef.current = io(process.env.NEXT_PUBLIC_SERVER!, {
+    socketRef.current = io('https://dnd-server-production.up.railway.app/', {
       transports: ["websocket"]
     });
 
