@@ -39,7 +39,9 @@ function RoomClient({roomId}: RoomClientProps) {
   const serverLink = process.env.NEXT_PUBLIC_SERVER!
 
   useEffect(() => {
-    socket = io(serverLink);
+    socket = io(process.env.NEXT_PUBLIC_SERVER!, {
+      transports: ["websocket"]
+    });
 
     socket.on("connect", () => {
       console.log("Connected to server");
