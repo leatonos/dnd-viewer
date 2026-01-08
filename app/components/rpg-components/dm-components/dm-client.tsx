@@ -44,7 +44,9 @@ export default function DmClient() {
   }  
 
   useEffect(() => {
-    socketRef.current = io(serverLink);
+    socketRef.current = io(process.env.NEXT_PUBLIC_SERVER!, {
+      transports: ["websocket"]
+    });
 
     const socket = socketRef.current;
 
@@ -76,7 +78,7 @@ export default function DmClient() {
     });
 
     socket.on('room_updated',(data:RoomInfo)=>{
-        setRoomColor(data.room_bg)
+      setRoomColor(data.room_bg)
     })
 
     return () => {
@@ -129,7 +131,6 @@ export default function DmClient() {
   setRoomColor(newColor);
 };
 
-
   const addCharacter = (roomId:string, dm_key:string) => {
     const sentData = {
       room_id: roomId,
@@ -166,9 +167,6 @@ export default function DmClient() {
     </SocketContext.Provider>
   );
 }
-
-
-
 
 const Dm_Dashboard = styled.main<{ $bgColor?: string }>`
   display:flex;
