@@ -1,10 +1,10 @@
 "use client"
-import { CharacterInfo } from "../../../types";
+import { CharacterInfo } from "../../../../types";
 import styled from "styled-components";
 import Image from "next/image";
 import { on } from "events";
 import { useEffect, useState } from "react";
-import {characterImgCollections} from "../../../utils"
+import {characterImgCollections} from "../../../../utils"
 
 type Props = {
   currentImage:string;

@@ -1,27 +1,30 @@
-"use client";
-
-import { CharacterInfo } from "../../../types";
+"use client"
+import { CharacterInfo } from "../../../../types";
 import styled from "styled-components";
+import Image from "next/image";
+import { on } from "events";
+import { useEffect, useState } from "react";
 
 type Props = {
   character: CharacterInfo;
-  onUpdate: (field: keyof CharacterInfo, value: string | number) => void;
+        onUpdate: (field: keyof CharacterInfo, value: string | number) => void;
 };
 
-export default function DmCharSkills({ character, onUpdate }: Props) {
+export default function DmCharInventory({}: Props) {
+
   return (
-    <Container>
-      <Title>Skills</Title>
+   <Container>
+      <Title>Inventory</Title>
 
       <Description>
         This section is currently a work in progress. Soon you’ll be able to
-        manage character skills, bonuses, and custom effects directly from here.
+        manage character equipment and inventory.
       </Description>
 
       <SupportMessage>
         If you’re enjoying this tool and would like to support its development,
         your feedback and support really help me add new features and improve the
-        experience for everyone 💙
+        experience for everyone.
       </SupportMessage>
 
       <WebsiteLink
@@ -32,8 +35,9 @@ export default function DmCharSkills({ character, onUpdate }: Props) {
         Visit my website
       </WebsiteLink>
     </Container>
-  );
+  )
 }
+
 
 /* styled-components */
 

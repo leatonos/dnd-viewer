@@ -1,12 +1,12 @@
 "use client"
-import { CharacterInfo } from "../../../types";
+import { CharacterInfo } from "../../../../types";
 import styled from "styled-components";
-import ProgressBar from "../progressbar";
-import ExperienceBar from "../experiencebar";
+import ProgressBar from "../../progressbar";
+import ExperienceBar from "../../experiencebar";
 import { SocketContext } from "@/app/lib/socket-context";
 import { JSX, useContext, useRef, useState } from "react";
 import { CharacterCard, StyledButton } from "@/app/styled-components";
-import Character from "../viewer-components/character";
+import Character from "../../viewer-components/character";
 import Image from "next/image";
 import { on } from "events";
 import ImageSelector from "./dm-photo-selector";

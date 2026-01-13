@@ -1,43 +1,35 @@
-"use client"
-import { CharacterInfo } from "../../../types";
+"use client";
+
+import { CharacterInfo } from "../../../../types";
 import styled from "styled-components";
-import Image from "next/image";
-import { on } from "events";
-import { useEffect, useState } from "react";
 
 type Props = {
   character: CharacterInfo;
-        onUpdate: (field: keyof CharacterInfo, value: string | number) => void;
+  onUpdate: (field: keyof CharacterInfo, value: string | number) => void;
 };
 
-export default function DmCharInventory({}: Props) {
-
+export default function DmCharSkills({ character, onUpdate }: Props) {
   return (
-   <Container>
-      <Title>Inventory</Title>
+    <Container>
+      <Title>Skills</Title>
 
       <Description>
-        This section is currently a work in progress. Soon you’ll be able to
-        manage character equipment and inventory.
+        This section is currently a work in progress. Soon you'll be able to
+        manage character skills, bonuses, and custom effects directly from here.
       </Description>
 
       <SupportMessage>
-        If you’re enjoying this tool and would like to support its development,
+        If you're enjoying this tool and would like to support its development,
         your feedback and support really help me add new features and improve the
-        experience for everyone.
+        experience for everyone
       </SupportMessage>
 
-      <WebsiteLink
-        href="https://pedrobaptista.com"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <WebsiteLink href="https://pedrobaptista.com" target="_blank" rel="noopener noreferrer">
         Visit my website
       </WebsiteLink>
     </Container>
-  )
+  );
 }
-
 
 /* styled-components */
 

@@ -6,7 +6,7 @@ import ExperienceBar from "../experiencebar";
 import { SocketContext } from "@/app/lib/socket-context";
 import { useContext, useRef, useState } from "react";
 import Image from "next/image";
-import CharSettings from "./dm-char-settings";
+import CharSettings from "./dm-char-editor/dm-char-settings";
 import { motion } from "motion/react"
 
 type Props = {
