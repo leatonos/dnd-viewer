@@ -156,7 +156,6 @@ export default function DmClient() {
     <SocketContext.Provider value={socketRef.current}>
     <Dm_Dashboard>
       {isRoomReady && <DM_Header roomInfo={{ room_name:roomName!,room_bg:roomColor}} roomId={roomInfo.room_id} dmKey={dmKey}/>}
-      <h1>{roomName}</h1>
         <DmPartyContainer $bgColor={roomColor}>
           <AnimatePresence> 
             {isRoomReady && characters.map((char) => (

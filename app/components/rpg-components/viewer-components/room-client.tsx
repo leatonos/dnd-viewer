@@ -52,6 +52,7 @@ function RoomClient({roomId}: RoomClientProps) {
       setRoomInfo(data);
       setCharacters(data.characters);
       setRoomBgColor(data.room_bg || "white");
+      document.title = data.room_name
     });
 
     socket.on("new_character_created",(data)=>{
@@ -63,6 +64,7 @@ function RoomClient({roomId}: RoomClientProps) {
     socket.on('room_updated',(data)=>{
       console.log(data)
       setRoomBgColor(data.room_bg)
+      document.title = data.room_name
     })
 
     socket.on("character_deleted", (deletedCharacter: string) => {

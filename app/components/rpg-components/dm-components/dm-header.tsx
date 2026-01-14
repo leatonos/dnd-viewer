@@ -31,16 +31,16 @@ export default function DM_Header({roomInfo,roomId,dmKey}: Props) {
                 width={32}
                 height={32}
               />
-              <h1 className="text-lg font-extrabold primary-text-color">
+              <h1 className="text-lg white-text font-extrabold primary-text-color">
                 DM Dashboard
               </h1>
             </div>
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-6">
-              <a className="text-sm font-extrabold primary-text-color">Home</a>
-              <a className="text-sm font-extrabold primary-text-color">How to Use</a>
-              <a className="text-sm font-extrabold primary-text-color">About</a>
+              <a className="text-sm font-extrabold white-text">Home</a>
+              <a className="text-sm font-extrabold white-text">How to Use</a>
+              <a className="text-sm font-extrabold white-text">About</a>
             </nav>
 
             {/* Actions */}
