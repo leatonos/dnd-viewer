@@ -4,10 +4,13 @@ import { CharacterInfo, RoomInfo } from "@/app/types";
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import styled from "styled-components";
+import DM_Header from "./dm-header";
 import DMCharacter from "./dm-character";
 import { generateRandomString } from "@/app/utils";
 import { SocketContext } from "@/app/lib/socket-context";
 import { AnimatePresence } from "motion/react";
+import { usePageTitle } from "@/app/hooks";
+import Footer from "../footer";
 
 export default function DmClient() {
   const [messages, setMessages] = useState<string[]>([]);
@@ -15,6 +18,7 @@ export default function DmClient() {
   const [connected, setConnected] = useState<boolean>(false);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
+  const [roomName, setRoomName] = useState<string>("Connecting...")
   const [roomColor,setRoomColor] = useState<string>("")
 
   const socketRef = useRef<Socket | null>(null);
@@ -64,6 +68,8 @@ export default function DmClient() {
       setRoomInfo(roomContent);
       setCharacters(roomContent.characters);
       setRoomColor(roomContent.room_bg)
+      setRoomName(roomContent.room_name)
+      document.title = roomContent.room_name
       setConnected(true);
     });
 
@@ -79,7 +85,9 @@ export default function DmClient() {
 
     socket.on('room_updated',(data:RoomInfo)=>{
       setRoomColor(data.room_bg)
-    })
+      setRoomName(data.room_name)
+      document.title = data.room_name
+    }) 
 
     return () => {
       socket.disconnect();
@@ -147,9 +155,8 @@ export default function DmClient() {
   return (
     <SocketContext.Provider value={socketRef.current}>
     <Dm_Dashboard>
-        <Header>
-          <input value={roomColor} onChange={(e)=>changeBackgroundColor(e.target.value)} type="color"/>
-        </Header>
+      {isRoomReady && <DM_Header roomInfo={{ room_name:roomName!,room_bg:roomColor}} roomId={roomInfo.room_id} dmKey={dmKey}/>}
+      <h1>{roomName}</h1>
         <DmPartyContainer $bgColor={roomColor}>
           <AnimatePresence> 
             {isRoomReady && characters.map((char) => (
@@ -163,6 +170,7 @@ export default function DmClient() {
             }
           </AnimatePresence>
         </DmPartyContainer>
+        <Footer isConnected={connected} version={"0.2.3"}/>
     </Dm_Dashboard>
     </SocketContext.Provider>
   );
@@ -171,7 +179,6 @@ export default function DmClient() {
 const Dm_Dashboard = styled.main<{ $bgColor?: string }>`
   display:flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   width: 100%;
   height: 100vh;

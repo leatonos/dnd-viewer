@@ -2,52 +2,55 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="w-full bg-white border-b border-gray-200">
+    <header className="secondary-bg w-full">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-6">
         <div className="flex h-16 items-center justify-between">
-          
+
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <Image
-              src="icons/objects/shield.svg" // put this in /public
-              alt="DnD Viewer"
-              width={32}
-              height={32}
-              className="object-contain"
-            />
-            <span className="text-lg font-semibold text-gray-900">
-              DnD Viewer
-            </span>
-          </div>
+          <Link href="/">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/icons/objects/shield.svg"
+                alt="DnD Viewer"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
+              <span className="text-lg font-extrabold primary-text-color">
+                DnD Viewer
+              </span>
+            </div>
+          </Link>
 
           {/* Desktop Nav */}
+          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6">
-            <a className="text-sm text-gray-600 hover:text-gray-900">Other Projects</a>
-            <a className="text-sm text-gray-600 hover:text-gray-900">How to Use</a>
-            <a className="text-sm text-gray-600 hover:text-gray-900">About</a>
+             <a href="/" className="text-sm primary-text-color font-extrabold hover:opacity-80 cursor-pointer">
+              Home
+            </a>
+            <a href="/how-to-use" className="text-sm primary-text-color font-extrabold hover:opacity-80 cursor-pointer">
+              How to Use
+            </a>
+            <a href="/about" className="text-sm primary-text-color font-extrabold hover:opacity-80 cursor-pointer">
+              About
+            </a>
           </nav>
 
           {/* Actions */}
-          <div className="hidden md:flex items-center gap-4">
-            {/*
-                <button className="text-sm text-gray-600 hover:text-gray-900">
-                Sign in
-                </button>
-            */}
-            <button className="rounded-md bg-indigo-600 px-8 py-2 text-sm font-medium text-white hover:bg-indigo-500">
-              Start Campaign
-            </button>
-          </div>
+          <Link href="/dm" className="third-bg white-text px-6 py-2 rounded font-bold hover:brightness-110 transition">
+            Start Campaign
+          </Link>
 
           {/* Mobile menu button */}
           <button
             onClick={() => setOpen(!open)}
-            className="md:hidden rounded-md p-2 text-gray-600 hover:bg-gray-100"
+            className="md:hidden rounded p-2 white-text hover:opacity-80"
           >
             ☰
           </button>
@@ -56,18 +59,18 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="space-y-1 px-4 py-3">
-            <a className="block rounded px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              Dashboard
+        <div className="md:hidden secondary-bg">
+          <div className="space-y-2 px-4 py-4">
+            <a className="block rounded px-3 py-2 white-text hover:opacity-80">
+              Other Projects
             </a>
-            <a className="block rounded px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              Projects
+            <a className="block rounded px-3 py-2 white-text hover:opacity-80">
+              How to Use
             </a>
-            <a className="block rounded px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              Team
+            <a className="block rounded px-3 py-2 white-text hover:opacity-80">
+              About
             </a>
-            <button className="mt-2 w-full rounded-md bg-indigo-600 px-4 py-2 text-sm text-white">
+            <button className="mt-3 w-full third-bg white-text px-4 py-2 rounded font-bold hover:brightness-110 transition">
               Start Campaign
             </button>
           </div>

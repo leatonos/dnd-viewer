@@ -1,4 +1,4 @@
-import Header from "./components/page-components/header";
+import Header from "../components/page-components/header";
 
 export default function Home() {
   return (
@@ -8,11 +8,11 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="primary-bg flex flex-col items-center justify-center text-center min-h-screen px-6">
-        <h1 className="text-6xl font-extrabold mb-6 secondary-text max-w-3xl">
-          Welcome to DM Viewer
+      <section className="secondary-bg flex flex-col items-center justify-center text-center min-h-screen px-6">
+        <h1 className="text-6xl font-extrabold mb-6 primary-text max-w-3xl">
+          How to use it
         </h1>
-        <p className="text-2xl secondary-text mb-10 max-w-2xl">
+        <p className="text-2xl primary-text mb-10 max-w-2xl">
           Bring your ideas to life with high-contrast colors, bold sections, and lively buttons. Perfectly styled using your custom color palette.
         </p>
         <div className="flex flex-wrap gap-6 justify-center">
