@@ -16,6 +16,17 @@ type Props = {
 export default function DM_Header({roomInfo,roomId,dmKey}: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+const copyRoomLink = async () => {
+  try {
+    await navigator.clipboard.writeText(`https://dnd-viewer.vercel.app/room/${roomId}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  } catch (err) {
+    console.error("Failed to copy", err);
+  }
+};
 
   return (
     <>
@@ -44,12 +55,21 @@ export default function DM_Header({roomInfo,roomId,dmKey}: Props) {
             </nav>
 
             {/* Actions */}
-            <button
-              onClick={() => setOptionsOpen(true)}
-              className="third-bg white-text px-6 py-2 rounded font-bold hover:brightness-110 transition"
-            >
-              Options
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={copyRoomLink}
+                className="secondary-bg third-text px-2 py-2 rounded font-bold hover:brightness-110 transition"
+              >
+                {copied ? "Copied to clipboard" : "Get Room link"}
+              </button>
+
+              <button
+                onClick={() => setOptionsOpen(true)}
+                className="third-bg white-text px-6 py-2 rounded font-bold hover:brightness-110 transition"
+              >
+                Options
+              </button>
+            </div>
 
             {/* Mobile menu button */}
             <button
